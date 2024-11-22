@@ -7,12 +7,14 @@ interface ProgressCardProps {
   title: string;
   initialHours: number;
   onProgressUpdate: (hours: number) => void;
+  onReset: () => void;
 }
 
 export default function ProgressCard({
   title,
   initialHours,
   onProgressUpdate,
+  onReset,
 }: ProgressCardProps) {
   const [hours, setHours] = useState(initialHours);
 
@@ -60,6 +62,12 @@ export default function ProgressCard({
           className="flex-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
         >
           2h
+        </button>
+        <button
+          onClick={onReset}
+          className="flex-1 px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+        >
+          Reset
         </button>
       </div>
     </Card>

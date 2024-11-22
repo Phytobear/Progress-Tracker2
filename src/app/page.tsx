@@ -95,6 +95,7 @@ export default function Home() {
               onProgressUpdate={(hours: number) =>
                 handleProgressUpdate(skill.title, hours)
               }
+              onReset={() => handleProgressUpdate(skill.title, 0)}
             />
           ))}
         </div>
