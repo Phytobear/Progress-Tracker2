@@ -1,60 +1,82 @@
-import React, { useState } from "react";
-import { Card, Text, Button, Flex, Box } from "@radix-ui/themes";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Card, Flex } from "@radix-ui/themes";
 
 interface ProgressCardProps {
   title: string;
 }
 
 export function ProgressCard({ title }: ProgressCardProps) {
-  const [progress, setProgress] = useState(0);
+  const [hours, setHours] = useState(0);
   const MAX_HOURS = 5;
 
-  const handleTimeClick = (hours: number) => {
-    const newProgress = Math.min(progress + (hours / MAX_HOURS) * 100, 100);
-    setProgress(newProgress);
+  useEffect(() => {
+    const savedHours = localStorage.getItem(`progress-${title}`);
+    if (savedHours) {
+      setHours(parseFloat(savedHours));
+    }
+  }, [title]);
+
+  const handleTimeClick = (addedHours: number) => {
+    setHours((prevHours) => {
+      const newHours = Math.min(prevHours + addedHours, MAX_HOURS);
+      localStorage.setItem(`progress-${title}`, newHours.toString());
+      return newHours;
+    });
   };
+
+  const handleReset = () => {
+    setHours(0);
+    localStorage.removeItem(`progress-${title}`);
+  };
+
+  const progressPercentage = (hours / MAX_HOURS) * 100;
 
   return (
     <Card size="2" style={{ maxWidth: 340 }}>
       <Flex direction="column" gap="3">
-        <Text size="5" weight="bold" as="p" className="font-sans">
-          {title}
-        </Text>
-
-        <Flex gap="3" justify="between">
-          <Button
-            variant="soft"
-            onClick={() => handleTimeClick(0.5)}
-            className="flex-1"
+        <Flex justify="between" align="center">
+          <div className="font-sans text-xl font-bold">{title}</div>
+          <button
+            onClick={handleReset}
+            className="text-xs text-red-500 hover:text-red-600 transition-colors px-2 py-1 rounded-md hover:bg-red-50"
           >
-            30min
-          </Button>
-          <Button
-            variant="soft"
-            onClick={() => handleTimeClick(1)}
-            className="flex-1"
-          >
-            1h
-          </Button>
-          <Button
-            variant="soft"
-            onClick={() => handleTimeClick(2)}
-            className="flex-1"
-          >
-            2h
-          </Button>
+            Clear
+          </button>
         </Flex>
 
-        <Box className="relative h-2 w-full overflow-hidden rounded-full bg-gray-200">
-          <Box
-            className="h-full bg-blue-500 transition-all duration-300 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </Box>
+        <Flex gap="3" justify="between">
+          <button
+            onClick={() => handleTimeClick(0.5)}
+            className="flex-1 px-3 py-1 text-sm bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+          >
+            30min
+          </button>
+          <button
+            onClick={() => handleTimeClick(1)}
+            className="flex-1 px-3 py-1 text-sm bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+          >
+            1h
+          </button>
+          <button
+            onClick={() => handleTimeClick(2)}
+            className="flex-1 px-3 py-1 text-sm bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+          >
+            2h
+          </button>
+        </Flex>
 
-        <Text align="center" size="2" color="gray" className="font-mono">
-          {Math.round((progress / 100) * MAX_HOURS * 10) / 10}h / {MAX_HOURS}h
-        </Text>
+        <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-blue-500 transition-all duration-300 ease-out"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
+
+        <div className="text-center font-mono text-sm text-gray-500">
+          {hours.toFixed(1)}h / {MAX_HOURS}h
+        </div>
       </Flex>
     </Card>
   );
