@@ -1,83 +1,67 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Card, Flex } from "@radix-ui/themes";
+import { useState, useEffect } from "react";
+import { Card } from "@radix-ui/themes";
 
 interface ProgressCardProps {
   title: string;
+  initialHours: number;
+  onProgressUpdate: (hours: number) => void;
 }
 
-export function ProgressCard({ title }: ProgressCardProps) {
-  const [hours, setHours] = useState(0);
-  const MAX_HOURS = 5;
+export default function ProgressCard({
+  title,
+  initialHours,
+  onProgressUpdate,
+}: ProgressCardProps) {
+  const [hours, setHours] = useState(initialHours);
 
   useEffect(() => {
-    const savedHours = localStorage.getItem(`progress-${title}`);
-    if (savedHours) {
-      setHours(parseFloat(savedHours));
-    }
-  }, [title]);
+    setHours(initialHours);
+  }, [initialHours]);
 
-  const handleTimeClick = (addedHours: number) => {
-    setHours((prevHours) => {
-      const newHours = Math.min(prevHours + addedHours, MAX_HOURS);
-      localStorage.setItem(`progress-${title}`, newHours.toString());
-      return newHours;
-    });
+  const handleTimeClick = (increment: number) => {
+    const newHours = Math.min(5, hours + increment);
+    setHours(newHours);
+    onProgressUpdate(newHours);
   };
 
-  const handleReset = () => {
-    setHours(0);
-    localStorage.removeItem(`progress-${title}`);
-  };
-
-  const progressPercentage = (hours / MAX_HOURS) * 100;
+  const progress = (hours / 5) * 100;
 
   return (
-    <Card size="2" style={{ maxWidth: 340 }}>
-      <Flex direction="column" gap="3">
-        <Flex justify="between" align="center">
-          <div className="font-sans text-xl font-bold">{title}</div>
-          <button
-            onClick={handleReset}
-            className="text-xs text-red-500 hover:text-red-600 transition-colors px-2 py-1 rounded-md hover:bg-red-50"
-          >
-            Clear
-          </button>
-        </Flex>
+    <Card className="p-4">
+      <div className="mb-4">
+        <div className="text-lg font-bold mb-1">{title}</div>
+        <div className="text-sm text-gray-500">{hours} / 5 hours</div>
+      </div>
 
-        <Flex gap="3" justify="between">
-          <button
-            onClick={() => handleTimeClick(0.5)}
-            className="flex-1 px-3 py-1 text-sm bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
-          >
-            30min
-          </button>
-          <button
-            onClick={() => handleTimeClick(1)}
-            className="flex-1 px-3 py-1 text-sm bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
-          >
-            1h
-          </button>
-          <button
-            onClick={() => handleTimeClick(2)}
-            className="flex-1 px-3 py-1 text-sm bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
-          >
-            2h
-          </button>
-        </Flex>
+      <div className="h-1 bg-gray-200 rounded-full mb-4">
+        <div
+          className="h-full bg-blue-500 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
 
-        <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-blue-500 transition-all duration-300 ease-out"
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
-
-        <div className="text-center font-mono text-sm text-gray-500">
-          {hours.toFixed(1)}h / {MAX_HOURS}h
-        </div>
-      </Flex>
+      <div className="flex gap-3">
+        <button
+          onClick={() => handleTimeClick(0.5)}
+          className="flex-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+        >
+          30min
+        </button>
+        <button
+          onClick={() => handleTimeClick(1)}
+          className="flex-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+        >
+          1h
+        </button>
+        <button
+          onClick={() => handleTimeClick(2)}
+          className="flex-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+        >
+          2h
+        </button>
+      </div>
     </Card>
   );
 }
