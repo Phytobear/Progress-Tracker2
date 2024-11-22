@@ -8,6 +8,7 @@ interface ProgressCardProps {
   initialHours: number;
   onProgressUpdate: (hours: number) => void;
   onReset: () => void;
+  onDelete: () => void;
 }
 
 export default function ProgressCard({
@@ -15,6 +16,7 @@ export default function ProgressCard({
   initialHours,
   onProgressUpdate,
   onReset,
+  onDelete,
 }: ProgressCardProps) {
   const [hours, setHours] = useState(initialHours);
 
@@ -62,6 +64,12 @@ export default function ProgressCard({
           className="flex-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
         >
           2h
+        </button>
+        <button
+          onClick={onDelete}
+          className="flex-1 px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+        >
+          Delete
         </button>
         <button
           onClick={onReset}

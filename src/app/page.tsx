@@ -13,6 +13,9 @@ export default function Home() {
   const [skills, setSkills] = useState<SkillProgress[]>([]);
   const [newSkillName, setNewSkillName] = useState("");
   const [isAddingSkill, setIsAddingSkill] = useState(false);
+  const handleDelete = (title: string) => {
+    setSkills((prev) => prev.filter((skill) => skill.title !== title));
+  };
 
   useEffect(() => {
     const savedSkills = localStorage.getItem("progress-tracker-skills");
@@ -96,6 +99,7 @@ export default function Home() {
                 handleProgressUpdate(skill.title, hours)
               }
               onReset={() => handleProgressUpdate(skill.title, 0)}
+              onDelete={() => handleDelete(skill.title)}
             />
           ))}
         </div>
