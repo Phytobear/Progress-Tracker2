@@ -36,10 +36,6 @@ export default function RootLayout({
           accentColor="blue"
           radius="medium"
           scaling="95%"
-          fontFamily={{
-            default: "var(--font-geist-sans)",
-            mono: "var(--font-geist-mono)",
-          }}
         >
           {children}
         </Theme>
